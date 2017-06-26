@@ -44,6 +44,8 @@ public:
     ofxCvPiCam();
     ~ofxCvPiCam();
 
+	static bool updating;
+
     bool isFrameNew() {return newFrame;};
 
     void setup();

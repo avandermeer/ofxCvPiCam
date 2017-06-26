@@ -8,8 +8,11 @@ int ofxCvPiCam::height = 0;
 MMAL_POOL_T * ofxCvPiCam::camera_video_port_pool = NULL;
 Mat ofxCvPiCam::image = Mat();
 bool ofxCvPiCam::newFrame = false;
+bool ofxCvPiCam::updating = false;
 static void gray_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
-    MMAL_BUFFER_HEADER_T *new_buffer;
+
+	ofxCvPiCam::updating = true;
+	MMAL_BUFFER_HEADER_T *new_buffer;
     mmal_buffer_header_mem_lock(buffer);
     unsigned char* pointer = (unsigned char *)(buffer -> data);
     ofxCvPiCam::set_image(Mat(ofxCvPiCam::height, ofxCvPiCam::width, CV_8UC1, pointer));
@@ -22,6 +25,8 @@ static void gray_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
         if (!new_buffer || status != MMAL_SUCCESS)
             ofLogVerbose() << ("Unable to return a buffer to the video port\n");
     }
+	ofxCvPiCam::updating = false;
+
 }
 
 static void color_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer) {
